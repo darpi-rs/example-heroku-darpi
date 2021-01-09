@@ -121,7 +121,9 @@ dependencies = [
 name = "example-heroku-darpi"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "darpi",
+ "derive_more",
  "serde",
  "shaku",
  "tokio",
