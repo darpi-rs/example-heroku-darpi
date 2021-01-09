@@ -1,0 +1,13 @@
+[package]
+name = "example-heroku-darpi"
+version = "0.1.0"
+authors = ["Petar Dambovaliev <petar.atanasov.1987@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+darpi = {git = "https://github.com/petar-dambovaliev/darpi.git", branch = "master"}
+serde = { version = "1.0", features = ["derive"] }
+tokio = {version = "0.2.11", features = ["full"]}
+shaku = {version = "0.5.0", features = ["thread_safe"]}
