@@ -62,7 +62,7 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 [[package]]
 name = "darpi"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#d615dcf39aa8eb78e883a110ff1a3882b03e43cd"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#6bedc517a6d3ed47ada2136d33fbd5852567ac38"
 dependencies = [
  "darpi-code-gen",
  "darpi-web",
@@ -77,7 +77,7 @@ dependencies = [
 [[package]]
 name = "darpi-code-gen"
 version = "0.0.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#d615dcf39aa8eb78e883a110ff1a3882b03e43cd"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#6bedc517a6d3ed47ada2136d33fbd5852567ac38"
 dependencies = [
  "darpi-web",
  "logos",
@@ -90,7 +90,7 @@ dependencies = [
 [[package]]
 name = "darpi-web"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#d615dcf39aa8eb78e883a110ff1a3882b03e43cd"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#6bedc517a6d3ed47ada2136d33fbd5852567ac38"
 dependencies = [
  "async-trait",
  "bytes 0.5.6",

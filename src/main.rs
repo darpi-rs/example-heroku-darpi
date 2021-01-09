@@ -130,8 +130,10 @@ async fn do_something(p: Path<Name>, payload: Json<Name>, logger: Arc<dyn Logger
 
 #[tokio::main]
 async fn main() -> Result<(), darpi::Error> {
+    let port = std::env::var("PORT").unwrap();
+    let address = "127.0.0.1:".to_owned() + &port;
     app!({
-        address: "127.0.0.1:3000",
+        address: address,
         module: make_container => Container,
         bind: [
             {
