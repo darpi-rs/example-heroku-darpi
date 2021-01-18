@@ -1,47 +1,18 @@
-use async_trait::async_trait;
-use darpi::{
-    app, handler, middleware, middleware::Expect, path_type, query_type, response::ResponderError,
-    Json, Method, Path, Query, RequestParts,
-};
-use derive_more::{Display, From};
+mod extractors;
+mod middleware;
+
+use darpi::{app, handler, Json, Method, Path, Query};
+use extractors::*;
+use middleware::access_control;
+use middleware::UserRole::Admin;
 use serde::{Deserialize, Serialize};
-use shaku::{module, Component, Interface};
-use std::sync::Arc;
-use UserRole::Admin;
+use shaku::module;
 
 ///////////// setup dependencies with shaku ///////////
-trait Logger: Interface {
-    fn log(&self, arg: &dyn std::fmt::Debug);
-}
-
-#[derive(Component)]
-#[shaku(interface = Logger)]
-struct MyLogger;
-impl Logger for MyLogger {
-    fn log(&self, arg: &dyn std::fmt::Debug) {
-        println!("{:#?}", arg)
-    }
-}
-
-#[derive(Component)]
-#[shaku(interface = UserExtractor)]
-struct UserExtractorImpl;
-
-#[async_trait]
-impl UserExtractor for UserExtractorImpl {
-    async fn extract(&self, p: &RequestParts) -> Result<UserRole, Error> {
-        Ok(UserRole::Admin)
-    }
-}
-
-#[async_trait]
-trait UserExtractor: Interface {
-    async fn extract(&self, p: &RequestParts) -> Result<UserRole, Error>;
-}
 
 module! {
     Container {
-        components = [UserExtractorImpl, MyLogger],
+        components = [UserExtractorImpl],
         providers = [],
     }
 }
@@ -52,49 +23,7 @@ fn make_container() -> Container {
 
 ////////////////////////
 
-#[derive(Debug, Display, From)]
-enum Error {
-    #[display(fmt = "no auth header")]
-    NoAuthHeaderError,
-    #[display(fmt = "Access denied")]
-    AccessDenied,
-}
-
-impl ResponderError for Error {}
-
-#[derive(Eq, PartialEq, Ord, PartialOrd)]
-enum UserRole {
-    Regular,
-    Admin,
-}
-
-// there are 2 types of middleware `Request` and `Response`
-// the constant argument that needs to be present is &RequestParts
-// everything else is up to the user
-// Arc<dyn UserExtractor> types are injected from the shaku container
-// Expect<UserRole> is a special type that is provided by the user when
-// the middleware is linked to a handler. This allows the expected value
-// to be different per handler + middleware
-// middlewares are obgligated to return Result<(), impl ResponderErr>
-// if a middleware returns an Err(e) all work is aborted and the coresponding
-// response is sent to the user
-#[middleware(Request)]
-async fn access_control(
-    user_role_extractor: Arc<dyn UserExtractor>,
-    p: &RequestParts,
-    expected_role: Expect<UserRole>,
-) -> Result<(), Error> {
-    let actual_role = user_role_extractor.extract(p).await?;
-
-    if expected_role > actual_role {
-        return Err(Error::AccessDenied);
-    }
-    Ok(())
-}
-
-#[path_type]
-#[query_type]
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Path, Query)]
 pub struct Name {
     name: String,
 }
@@ -109,10 +38,9 @@ pub struct Name {
 // an incoming request url does not contain the query parameters, it will
 // result in an error response
 #[handler(Container)]
-async fn hello_world(p: Path<Name>, q: Option<Query<Name>>, logger: Arc<dyn Logger>) -> String {
-    let other = q.map_or("nobody".to_owned(), |n| n.0.name);
+async fn hello_world(#[path] p: Name, #[query] q: Option<Name>) -> String {
+    let other = q.map_or("nobody".to_owned(), |n| n.name);
     let response = format!("{} sends hello to {}", p.name, other);
-    logger.log(&response);
     response
 }
 
@@ -122,9 +50,8 @@ async fn hello_world(p: Path<Name>, q: Option<Query<Name>>, logger: Arc<dyn Logg
 // Json<Name> is extracted from the request body
 // failure to do so will result in an error response
 #[handler(Container, [access_control(Admin)])]
-async fn do_something(p: Path<Name>, payload: Json<Name>, logger: Arc<dyn Logger>) -> String {
+async fn do_something(#[path] p: Name, #[body] payload: Json<Name>) -> String {
     let response = format!("{} sends hello to {}", p.name, payload.name);
-    logger.log(&response);
     response
 }
 
@@ -135,6 +62,7 @@ async fn main() -> Result<(), darpi::Error> {
     app!({
         address: address,
         module: make_container => Container,
+        middleware: [],
         bind: [
             {
                 route: "/hello_world/{name}",
