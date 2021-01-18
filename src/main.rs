@@ -1,6 +1,7 @@
 mod extractors;
 mod middleware;
 
+use crate::middleware::UserRole;
 use darpi::{app, handler, Json, Method, Path, Query};
 use extractors::*;
 use middleware::access_control;
@@ -50,8 +51,15 @@ async fn hello_world(#[path] p: Name, #[query] q: Option<Name>) -> String {
 // Json<Name> is extracted from the request body
 // failure to do so will result in an error response
 #[handler(Container, [access_control(Admin)])]
-async fn do_something(#[path] p: Name, #[body] payload: Json<Name>) -> String {
-    let response = format!("{} sends hello to {}", p.name, payload.name);
+async fn do_something(
+    #[path] p: Name,
+    #[body] payload: Json<Name>,
+    #[middleware(0)] user: UserRole,
+) -> String {
+    let response = format!(
+        "user {} with user role {} sends hello to {}",
+        p.name, user, payload.name
+    );
     response
 }
 

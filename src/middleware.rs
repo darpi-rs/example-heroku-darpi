@@ -21,6 +21,16 @@ pub enum UserRole {
     Admin,
 }
 
+impl std::fmt::Display for UserRole {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
+            Self::Admin => "Admin",
+            Self::Regular => "Regular",
+        };
+        write!(f, "{}", s)
+    }
+}
+
 // there are 2 types of middleware `Request` and `Response`
 // the constant argument that needs to be present is &RequestParts
 // everything else is up to the user
@@ -36,13 +46,13 @@ pub async fn access_control(
     #[inject] user_role_extractor: Arc<dyn UserExtractor>,
     #[request_parts] p: &RequestParts,
     #[handler] expected_role: UserRole,
-) -> Result<(), Error> {
+) -> Result<UserRole, Error> {
     let actual_role = user_role_extractor.extract(p).await?;
 
     if expected_role > actual_role {
         return Err(Error::AccessDenied);
     }
-    Ok(())
+    Ok(actual_role)
 }
 
 // #[middleware(Request)]
