@@ -28,7 +28,8 @@ pub(crate) fn make_container() -> Container {
 
 #[tokio::main]
 async fn main() -> Result<(), darpi::Error> {
-    let address = format!("127.0.0.1:{}", 3000);
+    let port = std::env::var("PORT").unwrap();
+    let address = "0.0.0.0:".to_owned() + &port;
     app!({
         address: address,
         module: make_container => Container,
