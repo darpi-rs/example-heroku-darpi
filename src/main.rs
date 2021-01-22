@@ -1,7 +1,7 @@
 mod controller;
 mod middleware;
 
-use controller::{do_something, important, login};
+use controller::{do_something, home, important, login};
 use darpi::{app, Method};
 use darpi_middleware::auth::*;
 use darpi_middleware::{body_size_limit, compression::decompress};
@@ -38,24 +38,23 @@ async fn main() -> Result<(), darpi::Error> {
         middleware: [body_size_limit(128), decompress()],
         bind: [
             {
+                route: "/",
+                method: Method::GET,
+                handler: home
+            },
+            {
                 route: "/login",
                 method: Method::POST,
-                // the POST method allows this handler to have
-                // Json<Name> as an argument
                 handler: login
             },
             {
                 route: "/hello_world/{name}",
                 method: Method::GET,
-                // the POST method allows this handler to have
-                // Json<Name> as an argument
                 handler: do_something
             },
             {
                 route: "/important",
                 method: Method::POST,
-                // the POST method allows this handler to have
-                // Json<Name> as an argument
                 handler: important
             }
         ],
