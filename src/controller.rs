@@ -38,7 +38,13 @@ pub struct Name {
 }
 
 // enforce admin role with authorize middleware
-#[handler(Container, [body_size_limit(64), authorize(Role::Admin)])]
-pub(crate) async fn do_something(#[path] p: Name, #[middleware(1)] _token: Token) -> String {
+#[handler(Container, [body_size_limit(64)])]
+pub(crate) async fn do_something(#[path] p: Name) -> String {
+    format!("user token {}", p.name)
+}
+
+// enforce admin role with authorize middleware
+#[handler(Container, [authorize(Role::Admin)])]
+pub(crate) async fn important(#[path] p: Name) -> String {
     format!("user token {}", p.name)
 }
