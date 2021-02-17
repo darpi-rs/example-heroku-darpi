@@ -32,11 +32,16 @@ async fn main() -> Result<(), darpi::Error> {
     let address = "0.0.0.0:".to_owned() + &port;
     app!({
         address: address,
-        module: make_container => Container,
+        container: {
+            factory: make_container(),
+            type: Container
+        },
         // a set of global middleware that will be executed for every handler
         // the order matters and it's up to the user to apply them in desired order
-        middleware: [body_size_limit(128), decompress()],
-        bind: [
+        middleware: {
+            request: [body_size_limit(128), decompress()]
+        },
+        handlers: [
             {
                 route: "/",
                 method: Method::GET,
@@ -57,7 +62,7 @@ async fn main() -> Result<(), darpi::Error> {
                 method: Method::POST,
                 handler: important
             }
-        ],
+        ]
     })
     .run()
     .await
