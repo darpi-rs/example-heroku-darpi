@@ -1,5 +1,5 @@
 use super::Container;
-use crate::middleware::Role;
+use crate::middleware::{roundtrip, Role};
 use darpi::chrono::Duration;
 use darpi::{handler, Json, Path};
 use darpi_middleware::auth::*;
@@ -37,11 +37,11 @@ pub struct Name {
 #[handler({
     container: Container,
     middleware: {
-        request: [body_size_limit(90)]
+        request: [body_size_limit(90), roundtrip("blah")]
     }
 })]
-pub(crate) async fn home() -> String {
-    format!("home")
+pub(crate) async fn home(#[middleware::request(1)] m_str: String) -> String {
+    format!("home {}", m_str)
 }
 
 // enforce admin role with authorize middleware

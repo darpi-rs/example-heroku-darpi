@@ -1,20 +1,33 @@
-mod controller;
+mod handlers;
 mod middleware;
+mod starwars;
 
-use controller::{do_something, home, important, login};
+use async_graphql::{EmptyMutation, EmptySubscription, Schema};
 use darpi::{app, Method};
 use darpi_middleware::auth::*;
 use darpi_middleware::{body_size_limit, compression::decompress};
+use handlers::{do_something, home, important, login};
 use shaku::module;
+use starwars::*;
 
 module! {
     pub Container {
-        components = [JwtAlgorithmProviderImpl, JwtSecretProviderImpl, TokenExtractorImpl, JwtTokenCreatorImpl],
+        components = [
+            JwtAlgorithmProviderImpl,
+            JwtSecretProviderImpl,
+            TokenExtractorImpl,
+            JwtTokenCreatorImpl,
+            SchemaGetterImpl
+        ],
         providers = [],
     }
 }
 
 pub(crate) fn make_container() -> Container {
+    let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
+        .data(StarWars::new())
+        .finish();
+
     let module = Container::builder()
         .with_component_parameters::<JwtSecretProviderImpl>(JwtSecretProviderImplParameters {
             secret: "my secret".to_string(),
@@ -22,6 +35,7 @@ pub(crate) fn make_container() -> Container {
         .with_component_parameters::<JwtAlgorithmProviderImpl>(JwtAlgorithmProviderImplParameters {
             algorithm: Algorithm::ES256,
         })
+        .with_component_parameters::<SchemaGetterImpl>(SchemaGetterImplParameters { schema })
         .build();
     module
 }
@@ -61,6 +75,16 @@ async fn main() -> Result<(), darpi::Error> {
                 route: "/important",
                 method: Method::POST,
                 handler: important
+            },
+            {
+                route: "/starwars",
+                method: Method::POST,
+                handler: starwars_post
+            },
+            {
+                route: "/starwars",
+                method: Method::GET,
+                handler: starwars_get
             }
         ]
     })
