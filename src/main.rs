@@ -7,6 +7,7 @@ use darpi::{app, Method};
 use darpi_middleware::auth::*;
 use darpi_middleware::{body_size_limit, compression::decompress};
 use handlers::{do_something, home, important, login};
+use jsonwebtoken::{DecodingKey, EncodingKey};
 use shaku::module;
 use starwars::*;
 
@@ -28,9 +29,12 @@ pub(crate) fn make_container() -> Container {
         .data(StarWars::new())
         .finish();
 
+    let secret = "my secret".as_ref();
+
     let module = Container::builder()
         .with_component_parameters::<JwtSecretProviderImpl>(JwtSecretProviderImplParameters {
-            secret: "my secret".to_string(),
+            encoding_key: EncodingKey::from_secret(secret),
+            decoding_key: DecodingKey::from_secret(secret),
         })
         .with_component_parameters::<JwtAlgorithmProviderImpl>(JwtAlgorithmProviderImplParameters {
             algorithm: Algorithm::HS256,

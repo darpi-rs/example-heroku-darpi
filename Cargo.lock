@@ -546,7 +546,7 @@ dependencies = [
 [[package]]
 name = "darpi"
 version = "0.1.2"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#5a54c1cbabe8662869a302ad84f7fc92c175f09a"
 dependencies = [
  "async-trait",
  "chrono",
@@ -567,7 +567,7 @@ dependencies = [
 [[package]]
 name = "darpi-code-gen"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#5a54c1cbabe8662869a302ad84f7fc92c175f09a"
 dependencies = [
  "darpi-route 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "logos",
@@ -581,7 +581,7 @@ dependencies = [
 [[package]]
 name = "darpi-graphql"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#5a54c1cbabe8662869a302ad84f7fc92c175f09a"
 dependencies = [
  "async-graphql",
  "async-trait",
@@ -597,7 +597,7 @@ dependencies = [
 [[package]]
 name = "darpi-headers"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#5a54c1cbabe8662869a302ad84f7fc92c175f09a"
 dependencies = [
  "darpi",
  "derive_more",
@@ -606,7 +606,7 @@ dependencies = [
 [[package]]
 name = "darpi-middleware"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#5a54c1cbabe8662869a302ad84f7fc92c175f09a"
 dependencies = [
  "async-compression",
  "async-trait",
@@ -633,7 +633,7 @@ dependencies = [
 [[package]]
 name = "darpi-route"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#5a54c1cbabe8662869a302ad84f7fc92c175f09a"
 dependencies = [
  "logos",
 ]
@@ -641,7 +641,7 @@ dependencies = [
 [[package]]
 name = "darpi-web"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#5a54c1cbabe8662869a302ad84f7fc92c175f09a"
 dependencies = [
  "async-trait",
  "bytes 0.5.6",
@@ -743,6 +743,7 @@ dependencies = [
  "darpi-middleware",
  "derive_more",
  "env_logger",
+ "jsonwebtoken",
  "log",
  "serde",
  "shaku",
