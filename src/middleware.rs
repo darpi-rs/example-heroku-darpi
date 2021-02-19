@@ -33,7 +33,7 @@ impl UserRole for Role {
     fn is_authorized(&self, claims: &Claims) -> bool {
         let other = Self::from_str(claims.role());
         info!("required: {} given: {}", self, other);
-        self < &other
+        &other >= self
     }
 }
 
