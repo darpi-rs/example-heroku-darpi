@@ -33,7 +33,7 @@ pub(crate) fn make_container() -> Container {
             secret: "my secret".to_string(),
         })
         .with_component_parameters::<JwtAlgorithmProviderImpl>(JwtAlgorithmProviderImplParameters {
-            algorithm: Algorithm::ES256,
+            algorithm: Algorithm::HS256,
         })
         .with_component_parameters::<SchemaGetterImpl>(SchemaGetterImplParameters { schema })
         .build();
