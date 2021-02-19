@@ -42,6 +42,9 @@ pub(crate) fn make_container() -> Container {
 
 #[tokio::main]
 async fn main() -> Result<(), darpi::Error> {
+    std::env::set_var("RUST_LOG", "info");
+    env_logger::init();
+
     let port = std::env::var("PORT").unwrap();
     let address = "0.0.0.0:".to_owned() + &port;
     app!({

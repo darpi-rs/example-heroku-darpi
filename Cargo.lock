@@ -209,6 +209,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "065374052e7df7ee4047b1160cca5e1467a12351a40b3da123c870ba0b8eda2a"
 
 [[package]]
+name = "atty"
+version = "0.2.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d9b39be18770d11421cdb1b9947a45dd3f37e93092cbf377614828a319d5fee8"
+dependencies = [
+ "hermit-abi",
+ "libc",
+ "winapi 0.3.9",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -535,7 +546,7 @@ dependencies = [
 [[package]]
 name = "darpi"
 version = "0.1.2"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#ec3c6a0c636b50a02defb1573859f13feed28c1b"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
 dependencies = [
  "async-trait",
  "chrono",
@@ -556,7 +567,7 @@ dependencies = [
 [[package]]
 name = "darpi-code-gen"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#ec3c6a0c636b50a02defb1573859f13feed28c1b"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
 dependencies = [
  "darpi-route 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "logos",
@@ -570,7 +581,7 @@ dependencies = [
 [[package]]
 name = "darpi-graphql"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#ec3c6a0c636b50a02defb1573859f13feed28c1b"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
 dependencies = [
  "async-graphql",
  "async-trait",
@@ -586,7 +597,7 @@ dependencies = [
 [[package]]
 name = "darpi-headers"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#ec3c6a0c636b50a02defb1573859f13feed28c1b"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
 dependencies = [
  "darpi",
  "derive_more",
@@ -595,7 +606,7 @@ dependencies = [
 [[package]]
 name = "darpi-middleware"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#ec3c6a0c636b50a02defb1573859f13feed28c1b"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
 dependencies = [
  "async-compression",
  "async-trait",
@@ -622,7 +633,7 @@ dependencies = [
 [[package]]
 name = "darpi-route"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#ec3c6a0c636b50a02defb1573859f13feed28c1b"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
 dependencies = [
  "logos",
 ]
@@ -630,7 +641,7 @@ dependencies = [
 [[package]]
 name = "darpi-web"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#ec3c6a0c636b50a02defb1573859f13feed28c1b"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#c8116f6f606fb5da9f85a211d5543433cb035606"
 dependencies = [
  "async-trait",
  "bytes 0.5.6",
@@ -703,6 +714,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "env_logger"
+version = "0.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "17392a012ea30ef05a610aa97dfb49496e71c9f676b27879922ea5bdf60d9d3f"
+dependencies = [
+ "atty",
+ "humantime",
+ "log",
+ "regex",
+ "termcolor",
+]
+
+[[package]]
 name = "event-listener"
 version = "2.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -718,6 +742,8 @@ dependencies = [
  "darpi-graphql",
  "darpi-middleware",
  "derive_more",
+ "env_logger",
+ "log",
  "serde",
  "shaku",
  "slab",
@@ -759,9 +785,9 @@ checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 
 [[package]]
 name = "form_urlencoded"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ece68d15c92e84fa4f19d3780f1294e5ca82a78a6d515f1efaabcc144688be00"
+checksum = "5fc25a87fa4fd2094bffb06925852034d90a17f0d1e05197d4956d3555752191"
 dependencies = [
  "matches",
  "percent-encoding",
@@ -937,7 +963,7 @@ checksum = "c9495705279e7140bf035dde1f6e750c162df8b625267cd52cc44e0b156732c8"
 dependencies = [
  "cfg-if 1.0.0",
  "libc",
- "wasi 0.10.0+wasi-snapshot-preview1",
+ "wasi 0.10.2+wasi-snapshot-preview1",
 ]
 
 [[package]]
@@ -1022,6 +1048,12 @@ name = "httpdate"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "494b4d60369511e7dea41cf646832512a94e542f68bb9c49e54518e0f468eb47"
+
+[[package]]
+name = "humantime"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9a3a5bfb195931eeb336b2a7b4d761daec841b97f947d34394601737a7bba5e4"
 
 [[package]]
 name = "hyper"
@@ -1949,19 +1981,28 @@ dependencies = [
 ]
 
 [[package]]
-name = "thiserror"
-version = "1.0.23"
+name = "termcolor"
+version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "76cc616c6abf8c8928e2fdcc0dbfab37175edd8fb49a4641066ad1364fdab146"
+checksum = "2dfed899f0eb03f32ee8c6a0aabdb8a7949659e3466561fc0adf54e26d88c5f4"
+dependencies = [
+ "winapi-util",
+]
+
+[[package]]
+name = "thiserror"
+version = "1.0.24"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e0f4a65597094d4483ddaed134f409b2cb7c1beccf25201a9f73c719254fa98e"
 dependencies = [
  "thiserror-impl",
 ]
 
 [[package]]
 name = "thiserror-impl"
-version = "1.0.23"
+version = "1.0.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9be73a2caec27583d0046ef3796c3794f868a5bc813db689eed00c7631275cd1"
+checksum = "7765189610d8241a44529806d6fd1f2e0a08734313a35d5b3a556f92b381f3c0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1979,12 +2020,11 @@ dependencies = [
 
 [[package]]
 name = "time"
-version = "0.1.44"
+version = "0.1.43"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6db9e6914ab8b1ae1c260a4ae7a49b6c5611b40328a735b21862567685e73255"
+checksum = "ca8a50ef2360fbd1eeb0ecd46795a87a19024eb4b53c5dc916ca1fd95fe62438"
 dependencies = [
  "libc",
- "wasi 0.10.0+wasi-snapshot-preview1",
  "winapi 0.3.9",
 ]
 
@@ -2196,9 +2236,9 @@ checksum = "a156c684c91ea7d62626509bce3cb4e1d9ed5c4d978f7b4352658f96a4c26b4a"
 
 [[package]]
 name = "url"
-version = "2.2.0"
+version = "2.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5909f2b0817350449ed73e8bcd81c8c3c8d9a7a5d8acba4b27db277f1868976e"
+checksum = "9ccd964113622c8e9322cfac19eb1004a07e636c545f325da085d5cdde6f1f8b"
 dependencies = [
  "form_urlencoded",
  "idna",
@@ -2252,9 +2292,9 @@ checksum = "cccddf32554fecc6acb585f82a32a72e28b48f8c4c1883ddfeeeaa96f7d8e519"
 
 [[package]]
 name = "wasi"
-version = "0.10.0+wasi-snapshot-preview1"
+version = "0.10.2+wasi-snapshot-preview1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a143597ca7c7793eff794def352d41792a93c481eb1042423ff7ff72ba2c31f"
+checksum = "fd6fbd9a79829dd1ad0cc20627bf1ed606756a7f77edff7b66b7064f9cb327c6"
 
 [[package]]
 name = "wasm-bindgen"
@@ -2347,6 +2387,15 @@ name = "winapi-i686-pc-windows-gnu"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ac3b87c63620426dd9b991e5ce0329eff545bccbbb34f3be09ff6fb6ab51b7b6"
+
+[[package]]
+name = "winapi-util"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "70ec6ce85bb158151cae5e5c87f95a8e97d2c0c4b001223f33a334e3ce5de178"
+dependencies = [
+ "winapi 0.3.9",
+]
 
 [[package]]
 name = "winapi-x86_64-pc-windows-gnu"

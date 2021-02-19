@@ -4,6 +4,7 @@ use darpi::chrono::Duration;
 use darpi::{handler, Json, Path};
 use darpi_middleware::auth::*;
 use darpi_middleware::body_size_limit;
+use log::warn;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
@@ -24,7 +25,14 @@ pub(crate) async fn login(
     let uid = "uid"; // hardcoded just for the example
     let tok = jwt_tok_creator
         .create(uid, &admin, Duration::days(30))
-        .await?;
+        .await
+        .map_err(|e| {
+            if let darpi_middleware::auth::Error::JWTTokenCreationError(inner) = &e {
+                warn!("could not create a token: {}", inner);
+            }
+            e
+        })?;
+
     Ok(tok)
 }
 
@@ -33,7 +41,6 @@ pub struct Name {
     name: String,
 }
 
-// enforce admin role with authorize middleware
 #[handler({
     container: Container,
     middleware: {
@@ -44,7 +51,6 @@ pub(crate) async fn home(#[middleware::request(1)] m_str: String) -> String {
     format!("home {}", m_str)
 }
 
-// enforce admin role with authorize middleware
 #[handler({
     container: Container,
     middleware: {
