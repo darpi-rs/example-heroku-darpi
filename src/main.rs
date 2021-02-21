@@ -21,7 +21,6 @@ use jsonwebtoken::{DecodingKey, EncodingKey};
 use shaku::module;
 use shaku::*;
 use starwars::*;
-use std::env;
 
 pub trait DbPoolGetter: Interface {
     fn pool(&self) -> &DbPool;
