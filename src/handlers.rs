@@ -1,7 +1,7 @@
 use super::{Container, DbPoolGetter};
 use crate::middleware::Role;
 use crate::models::{self, NewUser, User, UserError};
-use darpi::{chrono::Duration, handler, Json, Path, Query};
+use darpi::{chrono::Duration, from_path, handler, Json, Query};
 use darpi_middleware::{auth::*, body_size_limit};
 use log::warn;
 use serde::{Deserialize, Serialize};
@@ -33,7 +33,8 @@ pub(crate) async fn login(
     Ok(tok)
 }
 
-#[derive(Deserialize, Serialize, Debug, Path, Query)]
+#[from_path]
+#[derive(Deserialize, Serialize, Debug, Query)]
 pub struct Name {
     name: String,
 }
@@ -63,7 +64,8 @@ pub(crate) async fn create_user(
     Ok(Json(user))
 }
 
-#[derive(Deserialize, Path)]
+#[from_path]
+#[derive(Deserialize)]
 pub(crate) struct UserID {
     id: i32,
 }
