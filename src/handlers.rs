@@ -27,9 +27,7 @@ pub(crate) async fn login(
         .create(uid, &admin, Duration::days(30))
         .await
         .map_err(|e| {
-            if let darpi_middleware::auth::Error::JWTTokenCreationError(inner) = &e {
-                warn!("could not create a token: {}", inner);
-            }
+            warn!("could not create a token: {}", e);
             e
         })?;
 

@@ -83,6 +83,7 @@ async fn main() -> Result<(), darpi::Error> {
                 method: Method::POST,
                 handler: important
             },
+            //graphql
             {
                 route: "/starwars",
                 method: Method::POST,
