@@ -380,7 +380,6 @@ impl SchemaGetter for SchemaGetterImpl {
     }
 }
 
-// //todo if there is #[inject] but no container given give an error
 #[handler({
     container: Container
 })]

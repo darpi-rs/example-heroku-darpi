@@ -1,17 +1,46 @@
 mod handlers;
 mod jobs;
 mod middleware;
+mod models;
+mod schema;
 mod starwars;
+
+#[macro_use]
+extern crate diesel;
 
 use async_graphql::{EmptyMutation, EmptySubscription, Schema};
 use darpi::{app, Method};
 use darpi_middleware::auth::*;
 use darpi_middleware::{body_size_limit, compression::decompress};
-use handlers::{do_something, home, important, login};
+use diesel::pg::PgConnection;
+use diesel::r2d2::{self, ConnectionManager};
+use dotenv::dotenv;
+use handlers::{create_user, get_user, home, login};
 use jobs::*;
 use jsonwebtoken::{DecodingKey, EncodingKey};
 use shaku::module;
+use shaku::*;
 use starwars::*;
+use std::env;
+
+pub trait DbPoolGetter: Interface {
+    fn pool(&self) -> &DbPool;
+}
+
+type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
+
+#[derive(Component)]
+#[shaku(interface = DbPoolGetter)]
+pub struct DbPoolGetterImpl {
+    #[shaku(default = unimplemented!())]
+    db_pool: DbPool,
+}
+
+impl DbPoolGetter for DbPoolGetterImpl {
+    fn pool(&self) -> &DbPool {
+        &self.db_pool
+    }
+}
 
 module! {
     pub Container {
@@ -20,7 +49,8 @@ module! {
             JwtSecretProviderImpl,
             TokenExtractorImpl,
             JwtTokenCreatorImpl,
-            SchemaGetterImpl
+            SchemaGetterImpl,
+            DbPoolGetterImpl
         ],
         providers = [],
     }
@@ -33,6 +63,12 @@ pub(crate) fn make_container() -> Container {
 
     let secret = "my secret".as_ref();
 
+    let connspec = std::env::var("DATABASE_URL").expect("DATABASE_URL");
+    let manager = ConnectionManager::<PgConnection>::new(connspec);
+    let db_pool = r2d2::Pool::builder()
+        .build(manager)
+        .expect("Failed to create pool.");
+
     let module = Container::builder()
         .with_component_parameters::<JwtSecretProviderImpl>(JwtSecretProviderImplParameters {
             encoding_key: EncodingKey::from_secret(secret),
@@ -42,12 +78,14 @@ pub(crate) fn make_container() -> Container {
             algorithm: Algorithm::HS256,
         })
         .with_component_parameters::<SchemaGetterImpl>(SchemaGetterImplParameters { schema })
+        .with_component_parameters::<DbPoolGetterImpl>(DbPoolGetterImplParameters { db_pool })
         .build();
     module
 }
 
 #[tokio::main]
 async fn main() -> Result<(), darpi::Error> {
+    dotenv().ok();
     std::env::set_var("RUST_LOG", "info");
     env_logger::init();
 
@@ -79,14 +117,14 @@ async fn main() -> Result<(), darpi::Error> {
                 handler: login
             },
             {
-                route: "/hello_world/{name}",
+                route: "/user/{id}",
                 method: Method::GET,
-                handler: do_something
+                handler: get_user
             },
             {
-                route: "/important",
+                route: "/user",
                 method: Method::POST,
-                handler: important
+                handler: create_user
             },
             //graphql
             {

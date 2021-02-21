@@ -1,3 +1,4 @@
 /target
 /.idea
 example-heroku-darpi.iml
+.env

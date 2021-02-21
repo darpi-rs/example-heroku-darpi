@@ -1,9 +1,8 @@
-use super::Container;
-use crate::middleware::{roundtrip, Role};
-use darpi::chrono::Duration;
-use darpi::{handler, Json, Path};
-use darpi_middleware::auth::*;
-use darpi_middleware::body_size_limit;
+use super::{Container, DbPoolGetter};
+use crate::middleware::Role;
+use crate::models::{self, NewUser, User, UserError};
+use darpi::{chrono::Duration, handler, Json, Path, Query};
+use darpi_middleware::{auth::*, body_size_limit};
 use log::warn;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -34,29 +33,14 @@ pub(crate) async fn login(
     Ok(tok)
 }
 
-#[derive(Deserialize, Serialize, Debug, Path)]
+#[derive(Deserialize, Serialize, Debug, Path, Query)]
 pub struct Name {
     name: String,
 }
 
-#[handler({
-    container: Container,
-    middleware: {
-        request: [body_size_limit(90), roundtrip("blah")]
-    }
-})]
-pub(crate) async fn home(#[middleware::request(1)] m_str: String) -> String {
-    format!("home {}", m_str)
-}
-
-#[handler({
-    container: Container,
-    middleware: {
-        request: [body_size_limit(64)]
-    }
-})]
-pub(crate) async fn do_something(#[path] p: Name) -> String {
-    format!("user {}", p.name)
+#[handler]
+pub(crate) async fn home() -> String {
+    "Welcome to darpi".to_string()
 }
 
 // enforce admin role with authorize middleware
@@ -66,34 +50,35 @@ pub(crate) async fn do_something(#[path] p: Name) -> String {
         request: [body_size_limit(128), authorize(Role::Admin)]
     }
 })]
-pub(crate) async fn important(#[path] p: Name) -> String {
-    format!("user token {}", p.name)
+pub(crate) async fn create_user(
+    #[body] new_user: Json<NewUser>,
+    #[inject] db_pool: Arc<dyn DbPoolGetter>,
+) -> Result<Json<User>, UserError> {
+    let conn = db_pool.pool().get()?;
+
+    let user =
+        tokio::task::spawn_blocking(move || models::create_user(new_user.into_inner(), &conn))
+            .await??;
+
+    Ok(Json(user))
+}
+
+#[derive(Deserialize, Path)]
+pub(crate) struct UserID {
+    id: i32,
 }
 
 #[handler({
-    middleware: {
-        request: [roundtrip("blah")]
-    }
+    container: Container
 })]
-async fn do_something123(
-    // the request query is deserialized into Name
-    // if deseriliazation fails, it will result in an error response
-    // to make it optional wrap it in an Option<Name>
-    #[query] query: Name,
-    // the request path is deserialized into Name
-    #[path] path: Name,
-    // the request body is deserialized into the struct Name
-    // it is important to mention that the wrapper around Name
-    // should implement darpi::request::FromRequestBody
-    // Common formats like Json, Xml and Yaml are supported out
-    // of the box but users can implement their own
-    #[body] payload: Json<Name>,
-    // we can access the T from Ok(T) in the middleware result
-    #[middleware::request(0)] m_str: String, // returning a String works because darpi has implemented
-                                             // the Responder trait for common types
-) -> String {
-    format!(
-        "query: {} path: {} body: {} middleware: {}",
-        query.name, path.name, payload.name, m_str
-    )
+pub(crate) async fn get_user(
+    #[path] user_id: UserID,
+    #[inject] db_pool: Arc<dyn DbPoolGetter>,
+) -> Result<Option<Json<User>>, UserError> {
+    let conn = db_pool.pool().get()?;
+
+    let user =
+        tokio::task::spawn_blocking(move || models::find_user_by_id(user_id.id, &conn)).await??;
+
+    user.map_or(Ok(None), |u| Ok(Some(Json(u))))
 }
