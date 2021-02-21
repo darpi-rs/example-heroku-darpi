@@ -1,4 +1,5 @@
 mod handlers;
+mod jobs;
 mod middleware;
 mod starwars;
 
@@ -7,6 +8,7 @@ use darpi::{app, Method};
 use darpi_middleware::auth::*;
 use darpi_middleware::{body_size_limit, compression::decompress};
 use handlers::{do_something, home, important, login};
+use jobs::*;
 use jsonwebtoken::{DecodingKey, EncodingKey};
 use shaku::module;
 use starwars::*;
@@ -61,6 +63,9 @@ async fn main() -> Result<(), darpi::Error> {
         // the order matters and it's up to the user to apply them in desired order
         middleware: {
             request: [body_size_limit(128), decompress()]
+        },
+        jobs: {
+            response: [first_sync_job, first_sync_job1, first_sync_io_job]
         },
         handlers: [
             {

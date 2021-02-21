@@ -69,3 +69,31 @@ pub(crate) async fn do_something(#[path] p: Name) -> String {
 pub(crate) async fn important(#[path] p: Name) -> String {
     format!("user token {}", p.name)
 }
+
+#[handler({
+    middleware: {
+        request: [roundtrip("blah")]
+    }
+})]
+async fn do_something123(
+    // the request query is deserialized into Name
+    // if deseriliazation fails, it will result in an error response
+    // to make it optional wrap it in an Option<Name>
+    #[query] query: Name,
+    // the request path is deserialized into Name
+    #[path] path: Name,
+    // the request body is deserialized into the struct Name
+    // it is important to mention that the wrapper around Name
+    // should implement darpi::request::FromRequestBody
+    // Common formats like Json, Xml and Yaml are supported out
+    // of the box but users can implement their own
+    #[body] payload: Json<Name>,
+    // we can access the T from Ok(T) in the middleware result
+    #[middleware::request(0)] m_str: String, // returning a String works because darpi has implemented
+                                             // the Responder trait for common types
+) -> String {
+    format!(
+        "query: {} path: {} body: {} middleware: {}",
+        query.name, path.name, payload.name, m_str
+    )
+}
