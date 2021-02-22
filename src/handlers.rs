@@ -1,15 +1,13 @@
 use super::{Container, DbPoolGetter};
 use crate::middleware::Role;
 use crate::models::{self, NewUser, User, UserError};
-use darpi::job::IOBlockingJob;
-use darpi::oneshoot_blocking;
+use darpi::job::{IOBlockingJob, SenderExt};
 use darpi::{chrono::Duration, from_path, handler, Json, Query};
 use darpi_middleware::{auth::*, body_size_limit};
 use log::warn;
 use serde::{Deserialize, Serialize};
 use std::sync::mpsc::Sender;
 use std::sync::Arc;
-use tokio::sync::oneshot;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Login {
@@ -62,13 +60,12 @@ pub(crate) async fn create_user(
 ) -> Result<Json<User>, UserError> {
     let conn = db_pool.pool().get()?;
 
-    let user = oneshoot_blocking(job_queue, move || {
-        models::create_user(new_user.into_inner(), &conn)
-    })
-    .await
-    .map_err(|e| UserError::InternalError)?
-    .await
-    .map_err(|e| UserError::InternalError)??;
+    let user = job_queue
+        .oneshoot(move || models::create_user(new_user.into_inner(), &conn))
+        .await
+        .map_err(|_| UserError::InternalError)?
+        .await
+        .map_err(|_| UserError::InternalError)??;
 
     Ok(Json(user))
 }
