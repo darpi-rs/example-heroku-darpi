@@ -55,11 +55,16 @@ module! {
     }
 }
 
+// our shaku container factory
+// here we setup all our dependencies
+// that can be referenced from handlers by the #[inject] attribute
 pub(crate) fn make_container() -> Container {
     let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
         .data(StarWars::new())
         .finish();
 
+    // do not do this in a real application
+    // or you will go to the pit of hell
     let secret = "my secret".as_ref();
 
     let connspec = std::env::var("DATABASE_URL").expect("DATABASE_URL");

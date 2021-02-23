@@ -1,13 +1,18 @@
 use darpi::job::{CpuJob, FutureJob, IOBlockingJob, JobExt};
-use darpi::{job::Job, job_factory, Body, Response};
+use darpi::{job_factory, Body, Response};
 
+//FutureJob types are queued on the regular tokio runtime
+// they are executed in the background and do not hold up the
+// response to the user
 #[job_factory(Request)]
 async fn first_async_job() -> FutureJob {
     async { println!("first job in the background.") }.into()
 }
 
+// IOBlockingJob types are for any io operation that cannot be performed
+// in an async context. They are offloaded to a thread that is ok to block.
 #[job_factory(Response)]
-async fn first_sync_job(#[response] r: &Response<Body>) -> Job {
+async fn first_sync_job(#[response] r: &Response<Body>) -> IOBlockingJob {
     let status_code = r.status();
     {
         move || {
@@ -18,9 +23,11 @@ async fn first_sync_job(#[response] r: &Response<Body>) -> Job {
             );
         }
     }
-    .io_blocking()
+    .into()
 }
 
+// CpuJob type is used for cpu bound tasks.
+// they are being ran on the rayon runtime
 #[job_factory(Response)]
 async fn first_sync_job1() -> CpuJob {
     {

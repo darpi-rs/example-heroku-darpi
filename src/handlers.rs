@@ -15,6 +15,9 @@ pub struct Login {
     password: String,
 }
 
+// here we give the container type
+// so the framework knows where to get
+// the requested `Arc<dyn JwtTokenCreator>` from
 #[handler({
     container: Container
 })]
@@ -35,6 +38,8 @@ pub(crate) async fn login(
     Ok(tok)
 }
 
+// the `from_path` attribute allows us
+// to deserialize `UserID` from the request path
 #[from_path]
 #[derive(Deserialize, Serialize, Debug, Query)]
 pub struct Name {
@@ -46,7 +51,10 @@ pub(crate) async fn home() -> String {
     "Welcome to darpi".to_string()
 }
 
-// enforce admin role with authorize middleware
+// here we give the container type
+// so the framework knows where to get
+// the requested `Arc<dyn DbPoolGetter>` from
+// enforce max request body size 128 bytes and admin role via middleware
 #[handler({
     container: Container,
     middleware: {
@@ -60,6 +68,11 @@ pub(crate) async fn create_user(
 ) -> Result<Json<User>, UserError> {
     let conn = db_pool.pool().get()?;
 
+    //diesel does not have an async api
+    //we don't want to block the server thread
+    //so we will offload this as a blocking task
+    // to be executed on an appropriate thread
+    // and we will wait for the result on an async channel
     let user = job_queue
         .oneshot(move || models::create_user(new_user.into_inner(), &conn))
         .await
@@ -70,23 +83,38 @@ pub(crate) async fn create_user(
     Ok(Json(user))
 }
 
+// the `from_path` attribute allows us
+// to deserialize `UserID` from the request path
 #[from_path]
 #[derive(Deserialize)]
 pub(crate) struct UserID {
     id: i32,
 }
 
+// here we give the container type
+// so the framework knows where to get
+// the requested `Arc<dyn DbPoolGetter>` from
 #[handler({
     container: Container
 })]
 pub(crate) async fn get_user(
     #[path] user_id: UserID,
     #[inject] db_pool: Arc<dyn DbPoolGetter>,
+    #[blocking] job_queue: Sender<IOBlockingJob>,
 ) -> Result<Option<Json<User>>, UserError> {
     let conn = db_pool.pool().get()?;
 
-    let user =
-        tokio::task::spawn_blocking(move || models::find_user_by_id(user_id.id, &conn)).await??;
+    //diesel does not have an async api
+    //we don't want to block the server thread
+    //so we will offload this as a blocking task
+    // to be executed on an appropriate thread
+    // and we will wait for the result on an async channel
+    let user = job_queue
+        .oneshot(move || models::find_user_by_id(user_id.id, &conn))
+        .await
+        .map_err(|_| UserError::InternalError)?
+        .await
+        .map_err(|_| UserError::InternalError)??;
 
     user.map_or(Ok(None), |u| Ok(Some(Json(u))))
 }
