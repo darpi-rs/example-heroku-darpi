@@ -61,7 +61,7 @@ pub(crate) async fn create_user(
     let conn = db_pool.pool().get()?;
 
     let user = job_queue
-        .oneshoot(move || models::create_user(new_user.into_inner(), &conn))
+        .oneshot(move || models::create_user(new_user.into_inner(), &conn))
         .await
         .map_err(|_| UserError::InternalError)?
         .await
