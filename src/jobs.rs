@@ -1,4 +1,4 @@
-use darpi::job::{CpuJob, FutureJob, IOBlockingJob, JobExt};
+use darpi::job::{CpuJob, FutureJob, IOBlockingJob};
 use darpi::{job_factory, Body, Response};
 
 //FutureJob types are queued on the regular tokio runtime
