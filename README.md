@@ -9,6 +9,6 @@ This example includes integration with external frameworks like [diesel](https:/
 
 More resources
 
-###[the darpi book](https://darpi-book.herokuapp.com/)
+### [the darpi book](https://darpi-book.herokuapp.com/)
 
-###[darpi](https://github.com/petar-dambovaliev/darpi)
+### [darpi](https://github.com/petar-dambovaliev/darpi)

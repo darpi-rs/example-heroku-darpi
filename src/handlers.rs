@@ -1,12 +1,11 @@
 use super::{Container, DbPoolGetter};
 use crate::middleware::Role;
 use crate::models::{self, NewUser, User, UserError};
-use darpi::job::{IOBlockingJob, SenderExt};
+use darpi::job::IOBlockingJob;
 use darpi::{chrono::Duration, from_path, handler, Json, Query};
 use darpi_middleware::{auth::*, body_size_limit};
 use log::warn;
 use serde::{Deserialize, Serialize};
-use std::sync::mpsc::Sender;
 use std::sync::Arc;
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -64,7 +63,6 @@ pub(crate) async fn home() -> String {
 pub(crate) async fn create_user(
     #[body] new_user: Json<NewUser>,
     #[inject] db_pool: Arc<dyn DbPoolGetter>,
-    #[blocking] job_queue: Sender<IOBlockingJob>,
 ) -> Result<Json<User>, UserError> {
     let conn = db_pool.pool().get()?;
 
@@ -73,8 +71,8 @@ pub(crate) async fn create_user(
     //so we will offload this as a blocking task
     // to be executed on an appropriate thread
     // and we will wait for the result on an async channel
-    let user = job_queue
-        .oneshot(move || models::create_user(new_user.into_inner(), &conn))
+    let job = move || models::create_user(new_user.into_inner(), &conn);
+    let user = darpi::oneshot(IOBlockingJob::from(job))
         .await
         .map_err(|_| UserError::InternalError)?
         .await
@@ -100,7 +98,6 @@ pub(crate) struct UserID {
 pub(crate) async fn get_user(
     #[path] user_id: UserID,
     #[inject] db_pool: Arc<dyn DbPoolGetter>,
-    #[blocking] job_queue: Sender<IOBlockingJob>,
 ) -> Result<Option<Json<User>>, UserError> {
     let conn = db_pool.pool().get()?;
 
@@ -109,8 +106,8 @@ pub(crate) async fn get_user(
     //so we will offload this as a blocking task
     // to be executed on an appropriate thread
     // and we will wait for the result on an async channel
-    let user = job_queue
-        .oneshot(move || models::find_user_by_id(user_id.id, &conn))
+    let job = move || models::find_user_by_id(user_id.id, &conn);
+    let user = darpi::oneshot(IOBlockingJob::from(job))
         .await
         .map_err(|_| UserError::InternalError)?
         .await
