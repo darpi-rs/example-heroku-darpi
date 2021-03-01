@@ -10,6 +10,7 @@ extern crate diesel;
 
 use async_graphql::{EmptyMutation, EmptySubscription, Schema};
 use darpi::{app, Method};
+use darpi_graphql::MultipartOptionsProviderImpl;
 use darpi_middleware::auth::*;
 use darpi_middleware::{body_size_limit, compression::decompress};
 use diesel::pg::PgConnection;
@@ -49,7 +50,8 @@ module! {
             TokenExtractorImpl,
             JwtTokenCreatorImpl,
             SchemaGetterImpl,
-            DbPoolGetterImpl
+            DbPoolGetterImpl,
+            MultipartOptionsProviderImpl
         ],
         providers = [],
     }

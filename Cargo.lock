@@ -87,9 +87,9 @@ dependencies = [
 
 [[package]]
 name = "async-graphql"
-version = "2.5.7"
+version = "2.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e87af58717a11bfa811a113d14cf932b0f647ab2545817d3ecab7797b7219094"
+checksum = "d44e9cd1eedaa85207eea845e59280f87d8892b9c2c8057712c9f110726fb571"
 dependencies = [
  "async-graphql-derive",
  "async-graphql-parser",
@@ -127,9 +127,9 @@ dependencies = [
 
 [[package]]
 name = "async-graphql-derive"
-version = "2.5.5"
+version = "2.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c4acb9b57a51fe179e8b4b6eeebe25bd8ebf60a8f0e692a3746b700c8b693ac5"
+checksum = "91b828ac0ddb654259a9cf3aa0101bc47428e8798d97690f188f0bdd6fddd431"
 dependencies = [
  "Inflector",
  "async-graphql-parser",
@@ -143,9 +143,9 @@ dependencies = [
 
 [[package]]
 name = "async-graphql-parser"
-version = "2.5.5"
+version = "2.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "928bf3e2d8e7cac1701a61fe8f12a8e60433c97731e224884bbaf04738c40dca"
+checksum = "53e2f7bc6173bf7a30def040a0b541d87cb044da90ec3c8d23de7b47185379ea"
 dependencies = [
  "async-graphql-value",
  "pest",
@@ -156,9 +156,9 @@ dependencies = [
 
 [[package]]
 name = "async-graphql-value"
-version = "2.0.5"
+version = "2.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "57d3aa3cd3696ffd8decb10f5053affc78cb33ecfc545e480072bbc600e6723d"
+checksum = "3f8134ed15d6ebe6025977026a9dcfac18f94c99d762fccc2df6a4a7f7f1226f"
 dependencies = [
  "serde",
  "serde_json",
@@ -539,7 +539,7 @@ dependencies = [
 [[package]]
 name = "darpi"
 version = "0.1.2"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#4eadb7194f6c0e1791e064175e30fe238752dad9"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#9bb8277ab16d46edccc4c922faeb55a979cde831"
 dependencies = [
  "async-trait",
  "chrono",
@@ -560,7 +560,7 @@ dependencies = [
 [[package]]
 name = "darpi-code-gen"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#4eadb7194f6c0e1791e064175e30fe238752dad9"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#9bb8277ab16d46edccc4c922faeb55a979cde831"
 dependencies = [
  "darpi-route 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "logos",
@@ -574,7 +574,7 @@ dependencies = [
 [[package]]
 name = "darpi-graphql"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#4eadb7194f6c0e1791e064175e30fe238752dad9"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#9bb8277ab16d46edccc4c922faeb55a979cde831"
 dependencies = [
  "async-graphql",
  "async-trait",
@@ -584,13 +584,14 @@ dependencies = [
  "http",
  "serde",
  "serde_json",
+ "shaku",
  "tokio 0.2.25",
 ]
 
 [[package]]
 name = "darpi-headers"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#4eadb7194f6c0e1791e064175e30fe238752dad9"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#9bb8277ab16d46edccc4c922faeb55a979cde831"
 dependencies = [
  "darpi",
  "derive_more",
@@ -599,7 +600,7 @@ dependencies = [
 [[package]]
 name = "darpi-middleware"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#4eadb7194f6c0e1791e064175e30fe238752dad9"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#9bb8277ab16d46edccc4c922faeb55a979cde831"
 dependencies = [
  "async-compression",
  "async-trait",
@@ -626,7 +627,7 @@ dependencies = [
 [[package]]
 name = "darpi-route"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#4eadb7194f6c0e1791e064175e30fe238752dad9"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#9bb8277ab16d46edccc4c922faeb55a979cde831"
 dependencies = [
  "logos",
 ]
@@ -634,7 +635,7 @@ dependencies = [
 [[package]]
 name = "darpi-web"
 version = "0.1.0"
-source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#4eadb7194f6c0e1791e064175e30fe238752dad9"
+source = "git+https://github.com/petar-dambovaliev/darpi.git?branch=master#9bb8277ab16d46edccc4c922faeb55a979cde831"
 dependencies = [
  "async-trait",
  "bytes 0.5.6",
@@ -1901,9 +1902,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.63"
+version = "1.0.64"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43535db9747a4ba938c0ce0a98cc631a46ebf943c9e1d604e091df6007620bf6"
+checksum = "799e97dc9fdae36a5c8b8f2cae9ce2ee9fdce2058c57a93e6099d919fd982f79"
 dependencies = [
  "indexmap",
  "itoa",
