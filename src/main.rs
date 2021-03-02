@@ -9,10 +9,11 @@ mod starwars;
 extern crate diesel;
 
 use async_graphql::{EmptyMutation, EmptySubscription, Schema};
-use darpi::{app, Method};
+use darpi::{app, logger::DefaultFormat, Method};
 use darpi_graphql::MultipartOptionsProviderImpl;
 use darpi_middleware::auth::*;
 use darpi_middleware::{body_size_limit, compression::decompress};
+use darpi_middleware::{log_request, log_response};
 use diesel::pg::PgConnection;
 use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
@@ -89,6 +90,7 @@ pub(crate) fn make_container() -> Container {
     module
 }
 
+//todo assert middleware and job types to give more sensible errors
 #[tokio::main]
 async fn main() -> Result<(), darpi::Error> {
     dotenv().ok();
@@ -106,7 +108,8 @@ async fn main() -> Result<(), darpi::Error> {
         // a set of global middleware that will be executed for every handler
         // the order matters and it's up to the user to apply them in desired order
         middleware: {
-            request: [body_size_limit(128), decompress()]
+            request: [log_request(DefaultFormat), body_size_limit(128), decompress()],
+            response: [log_response(DefaultFormat, request(0))]
         },
         jobs: {
             response: [first_sync_job, first_sync_job1, first_sync_io_job]
