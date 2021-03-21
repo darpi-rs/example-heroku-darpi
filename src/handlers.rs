@@ -1,8 +1,8 @@
 use super::{Container, DbPoolGetter};
-use crate::middleware::Role;
+use crate::middleware::{roundtrip, Role};
 use crate::models::{self, NewUser, User, UserError};
 use darpi::job::IOBlockingJob;
-use darpi::{chrono::Duration, from_path, handler, Json, Query};
+use darpi::{chrono::Duration, handler, Json, Path, Query};
 use darpi_middleware::{auth::*, body_size_limit};
 use log::warn;
 use serde::{Deserialize, Serialize};
@@ -37,10 +37,7 @@ pub(crate) async fn login(
     Ok(tok)
 }
 
-// the `from_path` attribute allows us
-// to deserialize `UserID` from the request path
-#[from_path]
-#[derive(Deserialize, Serialize, Debug, Query)]
+#[derive(Deserialize, Serialize, Debug, Query, Path)]
 pub struct Name {
     name: String,
 }
@@ -57,12 +54,13 @@ pub(crate) async fn home() -> String {
 #[handler({
     container: Container,
     middleware: {
-        request: [body_size_limit(128), authorize(Role::Admin)]
+        request: [roundtrip("my string"), body_size_limit(128), authorize(Role::Admin)]
     }
 })]
 pub(crate) async fn create_user(
     #[body] new_user: Json<NewUser>,
     #[inject] db_pool: Arc<dyn DbPoolGetter>,
+    #[middleware::request(0)] _: String,
 ) -> Result<Json<User>, UserError> {
     let conn = db_pool.pool().get()?;
 
@@ -83,8 +81,7 @@ pub(crate) async fn create_user(
 
 // the `from_path` attribute allows us
 // to deserialize `UserID` from the request path
-#[from_path]
-#[derive(Deserialize)]
+#[derive(Deserialize, Path)]
 pub(crate) struct UserID {
     id: i32,
 }

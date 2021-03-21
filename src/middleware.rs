@@ -1,4 +1,4 @@
-use darpi::{middleware, Body, RequestParts};
+use darpi::{middleware, Body, Request};
 use darpi_middleware::auth::{Claims, UserRole};
 use log::info;
 use std::convert::Infallible;
@@ -6,8 +6,7 @@ use std::fmt;
 
 #[middleware(Request)]
 pub(crate) async fn roundtrip(
-    #[request_parts] _rp: &RequestParts,
-    #[body] _b: &Body,
+    #[request] _rp: &Request<Body>,
     #[handler] msg: impl AsRef<str> + Send + Sync + 'static,
 ) -> Result<String, Infallible> {
     let res = format!("{} from roundtrip middleware", msg.as_ref());
