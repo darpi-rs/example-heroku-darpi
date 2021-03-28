@@ -1,4 +1,6 @@
-###This is an example application for the darpi framework
+### example heroku darpi
+
+This is an example application for the darpi framework.
 
 It shows the basic framework features like creating handlers, middleware, background jobs and such.
 With a few lines of code, we have a fast, safe and testable api.
@@ -7,8 +9,8 @@ This example includes integration with external frameworks like [diesel](https:/
 [graphql](https://github.com/async-graphql/async-graphql).
 
 
-More resources
+### More resources
 
-### [the darpi book](https://darpi-rs.github.io/book/)
+* [the darpi book](https://darpi-rs.github.io/book/)
 
-### [darpi](https://github.com/darpi-rs/darpi)
+* [darpi](https://github.com/darpi-rs/darpi)
