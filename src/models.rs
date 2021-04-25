@@ -30,7 +30,7 @@ pub enum UserError {
     DBError(R2D2Error),
     InsertError(DieselError),
     TokioError(tokio::task::JoinError),
-    InternalError
+    InternalError,
 }
 
 impl From<R2D2Error> for UserError {
