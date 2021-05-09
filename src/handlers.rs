@@ -82,7 +82,7 @@ pub(crate) async fn create_user(
 // the `from_path` attribute allows us
 // to deserialize `UserID` from the request path
 #[derive(Deserialize, Path)]
-pub(crate) struct UserID {
+pub struct UserID {
     id: i32,
 }
 

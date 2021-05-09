@@ -9,7 +9,7 @@ mod starwars;
 extern crate diesel;
 
 use async_graphql::{EmptyMutation, EmptySubscription, Schema};
-use darpi::{app, logger::DefaultFormat, Method};
+use darpi::{app, logger::DefaultFormat, tokio, App};
 use darpi_graphql::MultipartOptionsProviderImpl;
 use darpi_middleware::auth::*;
 use darpi_middleware::{body_size_limit, compression::decompress};
@@ -117,33 +117,33 @@ async fn main() -> Result<(), darpi::Error> {
         handlers: [
             {
                 route: "/",
-                method: Method::GET,
+                method: GET,
                 handler: home
             },
             {
                 route: "/login",
-                method: Method::POST,
+                method: POST,
                 handler: login
             },
             {
                 route: "/user/{id}",
-                method: Method::GET,
+                method: GET,
                 handler: get_user
             },
             {
                 route: "/user",
-                method: Method::POST,
+                method: POST,
                 handler: create_user
             },
             //graphql
             {
                 route: "/starwars",
-                method: Method::POST,
+                method: POST,
                 handler: starwars_post
             },
             {
                 route: "/starwars",
-                method: Method::GET,
+                method: GET,
                 handler: starwars_get
             }
         ]
